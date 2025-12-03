@@ -3,41 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Abila's Public Details</title>
-    <!-- Tailwind CSS for styling -->
+    <title>Dynamic QR Code Details</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
-        .card { max-width: 400px; }
+        .card { max-width: 500px; }
+        .data-item { display: flex; justify-content: space-between; align-items: center; }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
-    <div class="card bg-white p-8 rounded-xl shadow-2xl w-full text-center border-t-4 border-indigo-500">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-indigo-500 mx-auto mb-4" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.98 5.98 0 0010 16a5.979 5.979 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd" />
-        </svg>
+    <div id="loading" class="text-xl font-semibold text-gray-500">Scanning data...</div>
+    
+    <div id="content" class="card bg-white p-8 rounded-2xl shadow-2xl w-full hidden border-t-4 border-indigo-500">
+        <div class="text-center mb-6">
+            <img id="profileImage" class="w-24 h-24 rounded-full mx-auto shadow-md mb-3" alt="Profile Image" src="https://placehold.co/100x100/ccc/000?text=No+Img">
+            <h1 id="displayName" class="text-3xl font-extrabold text-gray-900">Dynamic Profile</h1>
+            <p id="displayMessage" class="text-indigo-600 font-medium"></p>
+        </div>
         
-        <h1 class="text-3xl font-extrabold text-gray-900 mb-2">Abila's Public Profile</h1>
-        <p class="text-indigo-600 font-medium mb-8">Accessible Worldwide</p>
-        
-        <div class="space-y-4 text-left">
-            <div class="p-3 bg-gray-100 rounded-lg">
-                <span class="font-semibold text-gray-700 block">Full Name:</span>
-                <span class="text-gray-900">Abila A. Dev</span>
+        <div class="space-y-4 pt-4 border-t border-gray-100">
+            <div id="nameContainer" class="data-item p-3 bg-gray-100 rounded-lg hidden">
+                <span class="font-semibold text-gray-700">Name:</span>
+                <span id="nameValue" class="text-gray-900"></span>
             </div>
-            <div class="p-3 bg-gray-100 rounded-lg">
-                <span class="font-semibold text-gray-700 block">Title:</span>
-                <span class="text-gray-900">Project Creator</span>
-            </div>
-            <div class="p-3 bg-gray-100 rounded-lg">
-                <span class="font-semibold text-gray-700 block">Project Link:</span>
-                <a href="#" class="text-blue-600 hover:underline">Your New QR Generator App</a>
+            
+            <div id="linkContainer" class="data-item p-3 bg-gray-100 rounded-lg hidden">
+                <span class="font-semibold text-gray-700">Link:</span>
+                <a id="linkValue" href="#" target="_blank" class="text-blue-600 hover:underline"></a>
             </div>
         </div>
         
-        <p class="mt-8 text-xs text-gray-400">
-            This page is hosted for free on a global CDN and does not require the original computer to be online.
+        <a id="actionLink" href="#" target="_blank" 
+           class="mt-8 w-full block text-center py-3 px-4 border border-transparent rounded-lg shadow-md text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
+            Visit Website
+        </a>
+
+        <p class="mt-8 text-xs text-gray-400 text-center">
+            This data was dynamically loaded from the QR code parameters.
         </p>
     </div>
+
+    <script>
+        function getQueryParams() {
+            const params = {};
+            const queryString = window.location.search.substring(1);
+            const regex = /([^&=]+)=([^&]*)/g;
+            let m;
+            while (m = regex.exec(queryString)) {
+                params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+            }
+            return params;
+        }
+
+        window.onload = function() {
+            const params = getQueryParams();
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('content').classList.remove('hidden');
+
+            const name = params['name'] || 'User Profile';
+            const message = params['msg'] || 'No message provided.';
+            const link = params['url'];
+            const imageUrl = params['img'];
+
+            // 1. Set Name and Message
+            document.getElementById('displayName').innerText = name;
+            document.getElementById('displayMessage').innerText = message;
+
+            // 2. Set Image
+            const imgElement = document.getElementById('profileImage');
+            if (imageUrl) {
+                imgElement.src = imageUrl;
+            } else {
+                imgElement.src = "https://placehold.co/100x100/ccc/000?text=No+Img";
+            }
+            
+            // 3. Set Name container visibility
+            if (params['name']) {
+                document.getElementById('nameValue').innerText = params['name'];
+                document.getElementById('nameContainer').classList.remove('hidden');
+            }
+
+            // 4. Set Link and Action Button
+            if (link) {
+                document.getElementById('linkValue').innerText = link.length > 40 ? link.substring(0, 37) + '...' : link;
+                document.getElementById('linkValue').href = link;
+                document.getElementById('linkContainer').classList.remove('hidden');
+                document.getElementById('actionLink').href = link;
+            } else {
+                document.getElementById('actionLink').classList.add('hidden');
+            }
+        };
+    </script>
 </body>
 </html>

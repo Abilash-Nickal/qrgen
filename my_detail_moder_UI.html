@@ -5,194 +5,201 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dynamic QR Code Details</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome for social media icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
     <style>
         body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(-45deg, #667eea, #764ba2, #f093fb, #f5576c);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
-            color: #333;
+            font-family: "Inter", sans-serif;
+            overflow-x: hidden;
         }
-        @keyframes gradientShift {
+
+        /* 🔥 Live Animated Background */
+        .live-bg {
+            background: linear-gradient(135deg, #6d5dfc, #8e45ff, #ff3e9d, #ffb836);
+            background-size: 400% 400%;
+            animation: moveBg 12s ease infinite;
+        }
+        @keyframes moveBg {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
-        .card {
-            max-width: 500px;
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.25);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-        }
-        .data-item { display: flex; justify-content: space-between; align-items: center; }
 
-        /* Glossy effect for cards inside */
-        .glossy-item {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(5px);
+        /* 🔥 Glossy Glassmorphism Card */
+        .glass {
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            background: rgba(255, 255, 255, 0.22);
             border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            position: relative;
         }
 
-        /* Custom colors for dynamic branding */
-        .bg-facebook { background-color: #1877f2; }
-        .bg-instagram { background-image: linear-gradient(to right bottom, #405DE6, #5B51D8, #833AB4, #C135A2, #E1306C, #FD1D1D, #F56040, #F77737, #FCAF45); }
-        .bg-youtube { background-color: #ff0000; }
-        .bg-linkedin { background-color: #0a66c2; }
-        .bg-whatsapp { background-color: #25d366; }
-        .bg-generic { background-color: #6366f1; }
+        /* Glossy Shine Effect */
+        .glass::before {
+            content: "";
+            position: absolute;
+            top: -20%;
+            left: -20%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(
+                rgba(255, 255, 255, 0.4),
+                transparent 70%
+            );
+            animation: shine 8s linear infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translate(-20%, -20%); }
+            100% { transform: translate(20%, 20%); }
+        }
+
+        /* Social Icon Glow */
+        .glow-icon {
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.4);
+            transition: 0.3s ease;
+        }
+        .glow-icon:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 35px rgba(255, 255, 255, 0.6);
+        }
+
+        /* Modern Dropdown */
+        .dropdown {
+            transition: all 0.3s ease-in-out;
+        }
+        .dropdown-menu {
+            display: none;
+        }
+        .dropdown:hover .dropdown-menu {
+            display: block;
+        }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
-    <div id="loading" class="text-xl font-semibold text-gray-500">Scanning data...</div>
-    
-    <!-- Dynamic Card Container -->
-    <div id="content" class="card bg-white p-8 rounded-2xl shadow-2xl w-full hidden border-t-4 border-gray-300">
+
+<body class="live-bg min-h-screen flex items-center justify-center p-5">
+
+    <!-- Loading Message -->
+    <div id="loading" class="text-xl font-bold text-white drop-shadow">Scanning data...</div>
+
+    <!-- Glass Card -->
+    <div id="content" class="glass card p-8 rounded-3xl w-full max-w-lg hidden">
+
+        <!-- Modern Dropdown Menu -->
+        <div class="dropdown relative mb-5 text-right">
+            <button class="text-white text-xl">
+                <i class="fa-solid fa-ellipsis-vertical"></i>
+            </button>
+            <div class="dropdown-menu absolute right-0 mt-2 w-40 glass p-3 rounded-xl text-white space-y-2">
+                <a class="flex items-center space-x-2 hover:text-yellow-300">
+                    <i class="fa-solid fa-share"></i><span>Share</span>
+                </a>
+                <a class="flex items-center space-x-2 hover:text-yellow-300">
+                    <i class="fa-solid fa-download"></i><span>Download</span>
+                </a>
+                <a class="flex items-center space-x-2 hover:text-yellow-300">
+                    <i class="fa-solid fa-gear"></i><span>Settings</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Icon/Profile -->
         <div class="text-center mb-6">
-            
-            <!-- Dynamic Icon/Image Placeholder -->
-            <div id="iconContainer" class="w-24 h-24 rounded-full mx-auto shadow-xl mb-3 flex items-center justify-center text-white text-3xl">
-                <!-- Fallback Icon -->
+            <div id="iconContainer"
+                 class="w-28 h-28 rounded-full mx-auto flex items-center justify-center text-white text-4xl glow-icon bg-indigo-500 shadow-2xl">
                 <i id="socialIcon" class="fas fa-qrcode"></i>
             </div>
-            
-            <img id="profileImage" class="w-24 h-24 rounded-full mx-auto shadow-md mb-3 object-cover hidden" alt="Profile Image" src="">
-            
-            <h1 id="displayName" class="text-3xl font-extrabold text-white mt-4">Dynamic Profile</h1>
-            <p id="displayMessage" class="text-white font-medium"></p>
+
+            <img id="profileImage" class="w-28 h-28 rounded-full mx-auto object-cover hidden shadow-xl">
+
+            <h1 id="displayName" class="text-3xl font-extrabold text-white mt-4 drop-shadow-lg">Dynamic Profile</h1>
+            <p id="displayMessage" class="text-white/80 font-medium"></p>
         </div>
-        
-        <div class="space-y-4 pt-4 border-t border-white border-opacity-30">
-            <div id="nameContainer" class="data-item p-3 glossy-item rounded-lg hidden">
-                <span class="font-semibold text-white">Name:</span>
-                <span id="nameValue" class="text-white"></span>
+
+        <!-- Data List -->
+        <div class="space-y-4 text-white">
+            <div id="nameContainer" class="flex justify-between bg-white/20 p-3 rounded-xl hidden">
+                <span>Name:</span>
+                <span id="nameValue"></span>
             </div>
 
-            <div id="linkContainer" class="data-item p-3 glossy-item rounded-lg hidden">
-                <span class="font-semibold text-white">Link:</span>
-                <a id="linkValue" href="#" target="_blank" class="text-white hover:underline break-all"></a>
+            <div id="linkContainer" class="flex justify-between bg-white/20 p-3 rounded-xl hidden">
+                <span>Link:</span>
+                <a id="linkValue" href="#" target="_blank" class="underline"></a>
             </div>
         </div>
-        
+
         <!-- Action Button -->
-        <a id="actionLink" href="#" target="_blank" 
-           class="mt-8 w-full block text-center py-3 px-4 border border-transparent rounded-lg shadow-lg text-sm font-medium text-white transition duration-150 ease-in-out">
+        <a id="actionLink" href="#"
+           class="mt-8 block w-full text-center py-3 rounded-xl bg-indigo-600 text-white font-semibold shadow-lg hover:bg-indigo-500 transition">
             Go to Profile
         </a>
 
-        <p class="mt-8 text-xs text-white text-opacity-70 text-center">
-            The profile icon and link were determined from the QR code data.
-        </p>
     </div>
 
     <script>
-        // Mapping social media prefixes to Font Awesome classes and Tailwind custom colors
+        /* PLATFORM MAP (same logic — modern UI upgrade only) */
         const PLATFORM_MAP = [
-            { prefix: 'facebook.com', icon: 'fab fa-facebook-f', color: 'bg-facebook', name: 'Facebook' },
-            { prefix: 'instagram.com', icon: 'fab fa-instagram', color: 'bg-instagram', name: 'Instagram' },
-            { prefix: 'youtube.com', icon: 'fab fa-youtube', color: 'bg-youtube', name: 'YouTube' },
-            { prefix: 'linkedin.com/in', icon: 'fab fa-linkedin-in', color: 'bg-linkedin', name: 'LinkedIn' },
-            { prefix: 'wa.me', icon: 'fab fa-whatsapp', color: 'bg-whatsapp', name: 'WhatsApp' },
+            { prefix: 'facebook.com', icon: 'fab fa-facebook-f', color: 'bg-blue-600', name: 'Facebook' },
+            { prefix: 'instagram.com', icon: 'fab fa-instagram', color: 'bg-pink-500', name: 'Instagram' },
+            { prefix: 'youtube.com', icon: 'fab fa-youtube', color: 'bg-red-600', name: 'YouTube' },
+            { prefix: 'linkedin.com', icon: 'fab fa-linkedin-in', color: 'bg-blue-700', name: 'LinkedIn' },
+            { prefix: 'wa.me', icon: 'fab fa-whatsapp', color: 'bg-green-500', name: 'WhatsApp' },
         ];
 
         function getQueryParams() {
             const params = {};
-            const queryString = window.location.search.substring(1);
-            const regex = /([^&=]+)=([^&]*)/g;
-            let m;
-            while (m = regex.exec(queryString)) {
-                params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
-            }
+            location.search.substring(1).split("&").forEach(x => {
+                const [key, value] = x.split("=");
+                params[decodeURIComponent(key)] = decodeURIComponent(value || "");
+            });
             return params;
         }
 
         function applyDynamicStyles(link) {
-            const iconContainer = document.getElementById('iconContainer');
-            const actionLink = document.getElementById('actionLink');
-            const socialIcon = document.getElementById('socialIcon');
-            const card = document.getElementById('content');
-            
-            // Default styling
-            let platformMatch = { icon: 'fas fa-link', color: 'bg-generic', name: 'Website' };
-            
-            // 1. Check for platform match
-            if (link) {
-                for (const platform of PLATFORM_MAP) {
-                    if (link.includes(platform.prefix)) {
-                        platformMatch = platform;
-                        break;
-                    }
-                }
-            }
+            let apply = { icon: 'fas fa-link', color: 'bg-indigo-500', name: 'Website' };
+            PLATFORM_MAP.forEach(p => link?.includes(p.prefix) && (apply = p));
 
-            // 2. Apply styling based on platform
-            iconContainer.className = 'w-24 h-24 rounded-full mx-auto shadow-xl mb-3 flex items-center justify-center text-white text-3xl transition duration-500 ' + platformMatch.color;
-            socialIcon.className = platformMatch.icon;
-            
-            // 3. Update button text and color
-            actionLink.className = actionLink.className.replace(/bg-.*?-600/, platformMatch.color);
-            actionLink.innerText = `Go to ${platformMatch.name}`;
-            
-            // 4. Update card border color (using the color, not the full background class)
-            let borderColorClass = platformMatch.color.replace('bg-', 'border-');
-            if (borderColorClass.includes('instagram')) {
-                // Special handling for gradients if necessary, fallback to indigo 
-                card.className = card.className.replace(/border-t-4 border-.*?-500/, 'border-t-4 border-indigo-500');
-            } else {
-                card.className = card.className.replace(/border-t-4 border-.*?-500/, 'border-t-4 ' + borderColorClass.replace('bg-', 'border-'));
-            }
+            document.getElementById("iconContainer").className =
+                `w-28 h-28 rounded-full mx-auto flex items-center justify-center text-white text-4xl glow-icon ${apply.color}`;
+
+            document.getElementById("socialIcon").className = apply.icon;
+            document.getElementById("actionLink").innerText = `Go to ${apply.name}`;
         }
 
-        window.onload = function() {
+        window.onload = function () {
             const params = getQueryParams();
-            
-            document.getElementById('loading').classList.add('hidden');
-            document.getElementById('content').classList.remove('hidden');
 
-            const name = params['name'];
-            const message = params['msg'];
-            const link = params['url'];
-            const imageUrl = params['img'];
+            document.getElementById("loading").classList.add("hidden");
+            document.getElementById("content").classList.remove("hidden");
 
-            // 1. Set Name and Message
-            document.getElementById('displayName').innerText = name || 'User Profile';
-            document.getElementById('displayMessage').innerText = message || 'Click the link below.';
+            const { name, msg, url, img } = params;
 
-            // 2. Set Image (If a direct image URL is provided, override the icon)
-            const imgElement = document.getElementById('profileImage');
-            const iconContainer = document.getElementById('iconContainer');
+            document.getElementById("displayName").innerText = name || "User Profile";
+            document.getElementById("displayMessage").innerText = msg || "";
 
-            if (imageUrl) {
-                imgElement.src = imageUrl;
-                imgElement.classList.remove('hidden');
-                iconContainer.classList.add('hidden');
-            } else {
-                imgElement.classList.add('hidden');
-                iconContainer.classList.remove('hidden');
+            if (img) {
+                document.getElementById("profileImage").src = img;
+                document.getElementById("profileImage").classList.remove("hidden");
+                document.getElementById("iconContainer").classList.add("hidden");
             }
-            
-            // 3. Apply styles based on the link
-            applyDynamicStyles(link);
-            
-            // 4. Set Name container visibility
+
             if (name) {
-                document.getElementById('nameValue').innerText = name;
-                document.getElementById('nameContainer').classList.remove('hidden');
+                document.getElementById("nameValue").innerText = name;
+                document.getElementById("nameContainer").classList.remove("hidden");
             }
 
-            // 5. Set Link visibility and action button
-            const actionLink = document.getElementById('actionLink');
-            if (link) {
-                document.getElementById('linkValue').innerText = link.length > 50 ? link.substring(0, 47) + '...' : link;
-                document.getElementById('linkValue').href = link;
-                document.getElementById('linkContainer').classList.remove('hidden');
-                actionLink.href = link;
-            } else {
-                actionLink.classList.add('hidden');
+            if (url) {
+                document.getElementById("linkValue").innerText = url;
+                document.getElementById("linkValue").href = url;
+                document.getElementById("linkContainer").classList.remove("hidden");
+                document.getElementById("actionLink").href = url;
             }
-        };
+
+            applyDynamicStyles(url);
+        }
     </script>
+
 </body>
 </html>

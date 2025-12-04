@@ -8,12 +8,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
+        /* ... (CSS Styles from previous response remain the same) ... */
         body {
             font-family: "Inter", sans-serif;
             overflow-x: hidden;
         }
 
-        /* 🔥 Live Animated Background */
         .live-bg {
             background: linear-gradient(135deg, #1e3a8a, #3b82f6, #6366f1, #c084fc);
             background-size: 400% 400%;
@@ -25,7 +25,6 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* 🔥 Glossy Glassmorphism Card */
         .glass {
             backdrop-filter: blur(18px);
             -webkit-backdrop-filter: blur(18px);
@@ -63,61 +62,97 @@
             transform: scale(1.05);
             box-shadow: 0 0 35px rgba(255, 255, 255, 0.6);
         }
-        
-        /* Specific Link Button Style */
-        .action-link-item {
-             background: rgba(255, 255, 255, 0.1);
-             padding: 12px;
-             border-radius: 8px;
-             border: 1px solid rgba(255, 255, 255, 0.1);
-             display: flex;
-             align-items: center;
-             justify-content: space-between;
-             font-weight: 500;
-             transition: background 0.3s ease;
-             text-decoration: none;
-        }
-        .action-link-item:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-        .action-link-item i {
-            margin-right: 10px;
-        }
 
+        .dropdown-menu {
+            transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+            opacity: 0;
+            transform: translateY(10px);
+            pointer-events: none;
+        }
+    .dropdown:hover .dropdown-menu {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+
+    /* Platform Button Styles */
+    .platform-button {
+        display: inline-block;
+        margin: 2px;
+        padding: 8px 12px;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: background-color 0.3s, transform 0.2s;
+        color: white;
+    }
+    .platform-button:hover {
+        transform: scale(1.05);
+    }
     </style>
 </head>
 
 <body class="live-bg min-h-screen flex items-center justify-center p-5">
 
+    <!-- Loading Message -->
     <div id="loading" class="text-xl font-bold text-white drop-shadow">Scanning data...</div>
 
+    <!-- Glass Card -->
     <div id="content" class="glass card p-8 rounded-3xl w-full max-w-lg hidden">
 
-        <!-- Header -->
+        <!-- Modern Dropdown Menu -->
+        <div class="dropdown relative mb-5 text-right">
+            <button class="text-white text-xl">
+                <i class="fa-solid fa-ellipsis-vertical"></i>
+            </button>
+            <div class="dropdown-menu absolute right-0 mt-2 w-40 glass p-3 rounded-xl text-white space-y-2 z-10">
+                <a class="flex items-center space-x-2 hover:text-yellow-300 transition duration-150">
+                    <i class="fa-solid fa-share"></i><span>Share</span>
+                </a>
+                <a class="flex items-center space-x-2 hover:text-yellow-300 transition duration-150">
+                    <i class="fa-solid fa-download"></i><span>Download</span>
+                </a>
+                <a class="flex items-center space-x-2 hover:text-yellow-300 transition duration-150">
+                    <i class="fa-solid fa-gear"></i><span>Settings</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Icon/Profile -->
         <div class="text-center mb-6">
-            
-            <!-- FIX 1: Icon Link Wrapper -->
-            <a id="iconLink" href="#" class="block mx-auto">
-                <div id="iconContainer"
-                     class="w-28 h-28 rounded-full mx-auto flex items-center justify-center text-white text-4xl glow-icon shadow-2xl transition duration-500 bg-indigo-500">
-                    <i id="socialIcon" class="fa-solid fa-qrcode"></i>
-                </div>
-                <img id="profileImage" class="w-28 h-28 rounded-full mx-auto object-cover hidden shadow-xl mt-4">
-            </a>
+            <div id="iconContainer"
+                 class="w-28 h-28 rounded-full mx-auto flex items-center justify-center text-white text-4xl glow-icon shadow-2xl transition duration-500 bg-indigo-500">
+                <i id="socialIcon" class="fa-solid fa-qrcode"></i>
+            </div>
+
+            <img id="profileImage" class="w-28 h-28 rounded-full mx-auto object-cover hidden shadow-xl mt-4">
 
             <h1 id="displayName" class="text-3xl font-extrabold text-white mt-4 drop-shadow-lg">Dynamic Profile</h1>
             <p id="displayMessage" class="text-white/80 font-medium"></p>
         </div>
 
-        <!-- Links List -->
-        <div id="linksList" class="space-y-3 pt-4 border-t border-white/20 text-white">
-            <!-- Action links will be dynamically injected here -->
+        <!-- Data List -->
+        <div class="space-y-4 text-white">
+            <div id="nameContainer" class="flex justify-between bg-white/20 p-3 rounded-xl hidden">
+                <span>Name:</span>
+                <span id="nameValue"></span>
+            </div>
+            
+            <!-- Multiple Link Buttons -->
+            <div id="linksContainer" class="space-y-2 hidden">
+                <div id="linksButtons"></div>
+            </div>
+
+            <div id="copyDataContainer" class="flex justify-between bg-white/20 p-3 rounded-xl hidden">
+                <span class="font-bold text-yellow-300">Data to Copy:</span>
+                <span id="copyDataValue" class="text-right break-all"></span>
+            </div>
         </div>
 
-        <!-- Action Button (Primary Link) -->
+        <!-- Action Button (Dynamically assigned function) -->
         <a id="actionButton" href="#" role="button"
            class="mt-8 block w-full text-center py-3 rounded-xl text-white font-semibold shadow-lg transition duration-300 bg-indigo-600 hover:bg-indigo-500">
-            Go to Primary Action
+            Go to Profile
         </a>
         
         <p id="copyFeedback" class="text-sm text-center text-yellow-300 mt-3 hidden"></p>
@@ -135,28 +170,30 @@
             { prefix: 'tel:', icon: 'fa-solid fa-phone', color: 'bg-green-700', hover: 'hover:bg-green-600', name: 'Call', action: 'link' },
             { prefix: 'sms:', icon: 'fa-solid fa-message', color: 'bg-yellow-500', hover: 'hover:bg-yellow-400', name: 'Text', action: 'link' },
             { prefix: 'mailto:', icon: 'fa-solid fa-envelope', color: 'bg-red-500', hover: 'hover:bg-red-400', name: 'Email', action: 'link' },
-            { prefix: '?copydata=', icon: 'fa-solid fa-clipboard', color: 'bg-cyan-600', hover: 'hover:bg-cyan-500', name: 'Copy Data', action: 'copy' },
-            { prefix: 'http', icon: 'fa-solid fa-link', color: 'bg-gray-500', hover: 'hover:bg-gray-400', name: 'Website', action: 'link' },
+            { prefix: 'other:', icon: 'fa-solid fa-link', color: 'bg-indigo-600', hover: 'hover:bg-indigo-500', name: 'Custom Link', action: 'link' },
+            // Default for unknown links
+            { prefix: 'default', icon: 'fa-solid fa-globe', color: 'bg-purple-600', hover: 'hover:bg-purple-500', name: 'Website', action: 'link' },
         ];
 
         function getQueryParams() {
             const params = {};
-            // FIX: Ensure decoding is done correctly after replacing '+' with space
-            // This is the correct way to handle '+' used as space in query strings
-            location.search.substring(1).replace(/\+/g, ' ').split("&").forEach(x => {
+            location.search.substring(1).split("&").forEach(x => {
                 const [key, value] = x.split("=");
-                params[decodeURIComponent(key)] = decodeURIComponent(value || ""); 
+                // Properly decode URL parameters, including '+' for spaces
+                params[decodeURIComponent(key)] = decodeURIComponent((value || "").replace(/\+/g, ' '));
             });
             return params;
         }
 
+        // --- NEW COPY FUNCTION ---
         function copyDataToClipboard(data, button, feedbackElement) {
+            // Using navigator.clipboard.writeText is the modern way to copy.
             navigator.clipboard.writeText(data).then(() => {
                 button.innerText = "Copied!";
                 feedbackElement.innerText = "Data copied successfully.";
                 feedbackElement.classList.remove('hidden');
                 setTimeout(() => {
-                    button.innerText = "Copy Data";
+                    button.innerText = "Copy Data"; // Restore button text
                     feedbackElement.classList.add('hidden');
                 }, 2000);
             }).catch(err => {
@@ -166,95 +203,81 @@
             });
         }
 
-        // --- Core logic to get platform details ---
-        function getPlatformDetails(url) {
-            let matchString = url.includes('?copydata=') ? '?copydata=' : url; 
-
-            for (const platform of PLATFORM_MAP) {
-                // Check if the URL starts with a protocol/prefix or includes a domain name (for safety)
-                if (matchString.startsWith(platform.prefix) || (!platform.prefix.endsWith(':') && url && url.includes(platform.prefix))) {
-                    return platform;
-                }
-            }
-            return PLATFORM_MAP.find(p => p.prefix === 'http'); // Default to Website/Link
-        }
-
-        // --- Creates a link button element for the links list ---
-        function createLinkActionButton(url, message, platformDetails) {
-            const btn = document.createElement('a');
-            btn.className = 'action-link-item';
-            btn.innerHTML = `
-                <span class="text-white/90">${message}</span>
-                <span class="flex items-center text-sm font-semibold text-white">
-                    <i class="${platformDetails.icon} text-lg mr-2"></i> ${platformDetails.name}
-                </span>
-            `;
-
-            // Apply actions
-            if (platformDetails.action === 'copy') {
-                // FIX: Get the raw copy data value
-                const copyData = url.split('?copydata=')[1];
-                btn.href = '#';
-                btn.onclick = (e) => {
-                    e.preventDefault();
-                    // Decode the copy data value before copying
-                    copyDataToClipboard(decodeURIComponent(copyData), btn, document.getElementById("copyFeedback"));
-                };
-            } else {
-                btn.href = url;
-                if (!url.startsWith('tel:') && !url.startsWith('sms:') && !url.startsWith('mailto:')) {
-                    btn.setAttribute('target', '_blank');
-                }
-            }
-            return btn;
-        }
-
-
-        function applyDynamicStyles(primaryLinkUrl, isCopyAction) {
+        function applyDynamicStyles(link, copyData) {
             const iconContainer = document.getElementById("iconContainer");
             const actionButton = document.getElementById("actionButton");
-            const iconLink = document.getElementById("iconLink");
             const socialIcon = document.getElementById("socialIcon");
+            const copyFeedback = document.getElementById("copyFeedback");
+
+            let apply = {
+                icon: 'fa-solid fa-qrcode',
+                color: 'bg-indigo-600',
+                hover: 'hover:bg-indigo-500',
+                name: 'Profile',
+                action: 'link'
+            };
+
+            // 1. Check for copy data first
+            if (copyData) {
+                for (const platform of PLATFORM_MAP) {
+                    if (platform.action === 'copy') {
+                        apply = platform;
+                        break;
+                    }
+                }
+            } else if (link) {
+                // Check for platform match in link
+                for (const platform of PLATFORM_MAP) {
+                    if (link.includes(platform.prefix) || (platform.prefix.startsWith(platform.prefix) && platform.prefix !== 'default')) {
+                        apply = platform;
+                        break;
+                    }
+                }
+                // If no match, use default website
+                if (apply.icon === 'fa-solid fa-qrcode') {
+                    for (const platform of PLATFORM_MAP) {
+                        if (platform.prefix === 'default') {
+                            apply = platform;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // 2. Clear old click listeners
+            actionButton.onclick = null;
             
-            const urlToUse = isCopyAction ? primaryLinkUrl.split('?')[0] : primaryLinkUrl; 
-            const apply = getPlatformDetails(urlToUse);
+            // 3. Apply action-specific logic
+            actionButton.innerText = apply.name;
             
-            // 1. Clear old handlers and attributes
-            actionButton.onclick = null; 
-            actionButton.removeAttribute('target');
-            iconLink.onclick = null;
+            if (apply.action === 'copy' && copyData) {
+                // Attach copy function
+                actionButton.setAttribute('href', '#'); // Prevent navigation for copy
+                actionButton.onclick = () => copyDataToClipboard(copyData, actionButton, copyFeedback);
+            } else if (link) {
+                // Attach link attributes
+                actionButton.setAttribute('href', link);
+                // Only open new tab for HTTP links
+                if (!link.startsWith('tel:') && !link.startsWith('sms:') && !link.startsWith('mailto:')) {
+                    actionButton.setAttribute('target', '_blank');
+                } else {
+                    actionButton.removeAttribute('target');
+                }
+            } else {
+                // If no link or copy data, ensure the button is neutralized
+                actionButton.setAttribute('href', '#');
+                actionButton.removeAttribute('target');
+                actionButton.innerText = 'No Action Defined';
+            }
             
-            // 2. Apply styling
-            iconContainer.className = iconContainer.className.replace(/bg-.*?\-[56789]00|bg-.*?-700/g, '').trim();
-            actionButton.className = actionButton.className.replace(/bg-.*?\-[56789]00|bg-.*?-700/g, '').trim();
+            // 4. Apply styling
+            iconContainer.className = iconContainer.className.replace(/bg-.*?\-[56789]00/g, '').trim();
+            actionButton.className = actionButton.className.replace(/bg-.*?\-[56789]00/g, '').trim();
             actionButton.className = actionButton.className.replace(/hover:bg-.*?\-[4567]00/g, '').trim();
 
             iconContainer.classList.add(apply.color);
             socialIcon.className = apply.icon;
             actionButton.classList.add(apply.color, apply.hover);
-
-            // 3. Apply action-specific logic to the primary button
-            actionButton.innerText = apply.name;
-            
-            if (isCopyAction) {
-                const copyData = primaryLinkUrl.split('?copydata=')[1];
-                actionButton.setAttribute('href', '#'); 
-                actionButton.innerText = `Copy Data`;
-                actionButton.onclick = (e) => { e.preventDefault(); copyDataToClipboard(decodeURIComponent(copyData), actionButton, document.getElementById("copyFeedback")); };
-                
-                iconLink.setAttribute('href', '#');
-                iconLink.onclick = (e) => { e.preventDefault(); actionButton.click(); };
-
-            } else {
-                // Link Action
-                actionButton.setAttribute('href', primaryLinkUrl);
-                const target = (!primaryLinkUrl.startsWith('tel:') && !primaryLinkUrl.startsWith('sms:') && !primaryLinkUrl.startsWith('mailto:')) ? '_blank' : '_self';
-                actionButton.setAttribute('target', target);
-                
-                // Icon/Image link
-                iconLink.setAttribute('href', primaryLinkUrl);
-                iconLink.setAttribute('target', target);
-            }
         }
 
         window.onload = function () {
@@ -263,41 +286,67 @@
             document.getElementById("loading").classList.add("hidden");
             document.getElementById("content").classList.remove("hidden");
 
-            const { name, img, msg } = params;
-            const linksListContainer = document.getElementById("linksList");
-            let primaryLink = { url: null, message: null, isCopy: false };
+            const { name, msg, l1, l2, l3, img, copy } = params;
 
-            // 1. Set Header
             document.getElementById("displayName").innerText = name || "User Profile";
             document.getElementById("displayMessage").innerText = msg || "";
 
-            // 2. Process all three potential links (FIXED LOOP)
-            let foundPrimary = false;
-            for (let i = 1; i <= 3; i++) {
-                const urlKey = 'url' + i;
-                const msgKey = 'msg' + i;
-                const url = params[urlKey];
-                const message = params[msgKey];
-                
-                // FIX: Only process if both URL and Message are present
-                if (url && message) {
-                    const isCopy = url.includes('?copydata=');
-                    // Get platform details for the individual list item
-                    const platformApply = getPlatformDetails(url);
+            const copyData = copy || '';
+            const urls = [l1, l2, l3].filter(u => u);
 
-                    // Create dynamic list item
-                    linksListContainer.appendChild(createLinkActionButton(url, message, platformApply));
+            const linksContainer = document.getElementById("linksContainer");
+            const copyDataContainer = document.getElementById("copyDataContainer");
 
-                    // Set the primary action (the first valid link)
-                    if (!foundPrimary) { 
-                        primaryLink.url = url;
-                        primaryLink.isCopy = isCopy;
-                        foundPrimary = true;
+            // Check for facebook links
+            const facebookUrl = urls.find(u => u && u.includes('facebook.com'));
+
+            let linkData = '';
+            let actionType = 'none';
+
+            const linksButtons = document.getElementById("linksButtons");
+            linksButtons.innerHTML = '';
+
+            if (copyData) {
+                // Show copy button
+                const copyButton = document.createElement('button');
+                copyButton.innerHTML = '<i class="fa-solid fa-clipboard"></i> Copy Data';
+                copyButton.className = 'platform-button bg-cyan-600 hover:bg-cyan-500';
+                copyButton.onclick = () => copyDataToClipboard(copyData, copyButton, document.getElementById("copyFeedback"));
+                linksButtons.appendChild(copyButton);
+
+                linksContainer.classList.remove("hidden");
+                copyDataContainer.classList.add("hidden"); // Hide text, use button
+                linkData = '';
+                actionType = 'copy';
+            } else if (urls.length > 0) {
+                // Show platform buttons for each link
+                linksContainer.classList.remove("hidden");
+                copyDataContainer.classList.add("hidden");
+
+                urls.forEach((url, idx) => {
+                    if (url) {
+                        let platformData = { icon: '<i class="fa-solid fa-globe"></i>', color: 'bg-purple-600', hover: 'hover:bg-purple-500', name: 'Website' };
+                        for (const platform of PLATFORM_MAP) {
+                            if (url.includes(platform.prefix) || (platform.prefix.startsWith(platform.prefix) && platform.prefix !== 'default')) {
+                                platformData = platform;
+                                break;
+                            }
+                        }
+
+                        const button = document.createElement('button');
+                        const displayName = platformData.name;
+                        button.innerHTML = `${platformData.icon} ${displayName}`;
+                        button.className = `platform-button ${platformData.color.replace('bg-', 'bg-')} ${platformData.hover}`;
+                        button.onclick = () => window.open(url, '_blank');
+                        linksButtons.appendChild(button);
                     }
-                }
+                });
+
+                linkData = urls[0]; // Primary link for action button
+                actionType = 'links';
             }
-            
-            // 3. Profile/Image Display Logic
+
+            // --- Profile/Data Display Logic ---
             const imgElement = document.getElementById("profileImage");
             const iconContainer = document.getElementById("iconContainer");
 
@@ -307,17 +356,36 @@
                 iconContainer.classList.add("hidden");
                 imgElement.classList.add("glow-icon");
             } else {
+                imgElement.classList.add("hidden");
                 iconContainer.classList.remove("hidden");
                 iconContainer.classList.add("glow-icon");
             }
 
-            // 4. Apply Styles and Action to Primary Button
-            if (primaryLink.url) {
-                applyDynamicStyles(primaryLink.url, primaryLink.isCopy);
-            } else {
-                document.getElementById("actionButton").classList.add('hidden');
+            if (name) {
+                document.getElementById("nameValue").innerText = name;
+                document.getElementById("nameContainer").classList.remove("hidden");
+            }
+
+            // --- Apply Styles and Action ---
+            const primaryLink = actionType === 'facebook' ? facebookUrl : linkData;
+            applyDynamicStyles(primaryLink, copyData);
+
+            // Make image and icon clickable
+            if (primaryLink) {
+                const profileImage = document.getElementById("profileImage");
+                if (!profileImage.classList.contains('hidden')) {
+                    profileImage.onclick = () => { window.open(primaryLink, '_blank'); };
+                    profileImage.style.cursor = 'pointer';
+                } else {
+                    const iconCont = document.getElementById("iconContainer");
+                    if (!iconCont.classList.contains('hidden')) {
+                        iconCont.onclick = () => { window.open(primaryLink, '_blank'); };
+                        iconCont.style.cursor = 'pointer';
+                    }
+                }
             }
         }
     </script>
+
 </body>
 </html>

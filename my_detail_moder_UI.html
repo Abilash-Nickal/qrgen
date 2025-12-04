@@ -163,8 +163,8 @@
             const params = {};
             location.search.substring(1).split("&").forEach(x => {
                 const [key, value] = x.split("=");
-                // Robust decoding for nested URL parameters
-                params[decodeURIComponent(key)] = decodeURIComponent(decodeURIComponent(value || "")); 
+                // Properly decode URL parameters, including '+' for spaces
+                params[decodeURIComponent(key)] = decodeURIComponent((value || "").replace(/\+/g, ' '));
             });
             return params;
         }

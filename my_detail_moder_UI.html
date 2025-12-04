@@ -196,6 +196,30 @@
             { prefix: 'default', icon: 'fa-solid fa-globe', color: 'bg-purple-600', hover: 'hover:bg-purple-500', name: 'Website', action: 'link' },
         ];
 
+        const PLATFORM_BASES = {
+            'fb': 'https://www.facebook.com/',
+            'inst': 'https://www.instagram.com/',
+            'ytb': 'https://www.youtube.com/@',
+            'lin': 'https://www.linkedin.com/in/',
+            'what': 'https://wa.me/',
+            'tel': 'tel:',
+            'sms': 'sms:',
+            'mail': 'mailto:',
+            '': ''
+        };
+
+        function createLink(platform, username) {
+            if (!platform || !username) return "";
+            const base = PLATFORM_BASES[platform] || "";
+            if (platform === 'ytb') {
+                username = username.startsWith('@') ? username.substring(1) : username;
+            }
+            if (['what', 'tel', 'sms'].includes(platform)) {
+                username = username.replace(/[^0-9+]/g, '');
+            }
+            return base + username;
+        }
+
         function getQueryParams() {
             const params = {};
             location.search.substring(1).split("&").forEach(x => {
@@ -222,7 +246,7 @@
         // Download data as text file
         function downloadData() {
             const params = getQueryParams();
-            const { name, msg, l1, l2, l3, img, copy, key } = params;
+            const { name, msg, p1, u1, p2, u2, p3, u3, img, copy, key } = params;
             const data = [
                 `Name: ${name || 'N/A'}`,
                 `Message: ${msg || 'N/A'}`,
@@ -230,9 +254,9 @@
                 `Copy Data: ${copy || 'N/A'}`,
                 `Key: ${key || 'N/A'}`,
                 'Links:',
-                l1 || '',
-                l2 || '',
-                l3 || ''
+                createLink(p1, u1) || '',
+                createLink(p2, u2) || '',
+                createLink(p3, u3) || ''
             ].join('\n');
 
             const blob = new Blob([data], {type: 'text/plain'});
@@ -357,13 +381,16 @@
             document.getElementById("loading").classList.add("hidden");
             document.getElementById("content").classList.remove("hidden");
 
-            const { name, msg, l1, l2, l3, img, copy, key } = params;
+            const { name, msg, p1, p2, p3, u1, u2, u3, img, copy, key } = params;
 
             document.getElementById("displayName").innerText = name || "User Profile";
             document.getElementById("displayMessage").innerText = msg || "";
 
             const copyData = copy || '';
             const keyData = key || '';
+            const l1 = createLink(p1, u1);
+            const l2 = createLink(p2, u2);
+            const l3 = createLink(p3, u3);
             const urls = [l1, l2, l3].filter(u => u);
 
             const linksContainer = document.getElementById("linksContainer");

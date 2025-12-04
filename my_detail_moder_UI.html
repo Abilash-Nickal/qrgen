@@ -195,7 +195,7 @@
             // Using navigator.clipboard.writeText is the modern way to copy.
             navigator.clipboard.writeText(data).then(() => {
                 button.innerText = "Copied!";
-                feedbackElement.innerText = "Data copied successfully.";
+                feedbackElement.innerText = "Copied: " + data;
                 feedbackElement.classList.remove('hidden');
             }).catch(err => {
                 feedbackElement.innerText = "Copy failed. Please copy manually.";

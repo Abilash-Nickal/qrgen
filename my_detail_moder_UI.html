@@ -208,7 +208,7 @@
             });
         }
 
-        function applyDynamicStyles(link, copyData) {
+        function applyDynamicStyles(link, copyData, keyData) {
             const iconContainer = document.getElementById("iconContainer");
             const actionButton = document.getElementById("actionButton");
             const socialIcon = document.getElementById("socialIcon");
@@ -222,8 +222,14 @@
                 action: 'link'
             };
 
-            // 1. Check for copy data first
-            if (copyData) {
+            // 1. Check for copy data in order: key > copy > link
+            if (keyData) {
+                // Use key data for copy
+                apply.name = 'Copy Key';
+                apply.color = 'bg-cyan-600';
+                apply.hover = 'hover:bg-cyan-500';
+                apply.action = 'keycopy';
+            } else if (copyData) {
                 for (const platform of PLATFORM_MAP) {
                     if (platform.action === 'copy') {
                         apply = platform;
@@ -255,8 +261,12 @@
             
             // 3. Apply action-specific logic
             actionButton.innerText = apply.name;
-            
-            if (apply.action === 'copy' && copyData) {
+
+            if (apply.action === 'keycopy' && keyData) {
+                // Attach copy function for key
+                actionButton.setAttribute('href', '#'); // Prevent navigation for copy
+                actionButton.onclick = () => copyDataToClipboard(keyData, actionButton, copyFeedback);
+            } else if (apply.action === 'copy' && copyData) {
                 // Attach copy function
                 actionButton.setAttribute('href', '#'); // Prevent navigation for copy
                 actionButton.onclick = () => copyDataToClipboard(copyData, actionButton, copyFeedback);
@@ -373,7 +383,7 @@
 
             // --- Apply Styles and Action ---
             const primaryLink = linkData;
-            applyDynamicStyles(primaryLink, copyData);
+            applyDynamicStyles(primaryLink, copyData, keyData);
 
             // Handle key copy
             if (keyData) {
